@@ -1,0 +1,17 @@
+FROM openjdk:8-jdk as builder
+
+WORKDIR /microservice/
+
+ARG MVN_VERSION=3.5.2
+
+RUN wget -q http://mirrors.ae-online.de/apache/maven/maven-3/$MVN_VERSION/binaries/apache-maven-$MVN_VERSION-bin.zip -P /tmp \
+    && unzip /tmp/apache-maven-$MVN_VERSION-bin.zip -d /tmp \
+    && ln -s /tmp/apache-maven-$MVN_VERSION/bin/mvn /usr/local/bin/
+
+ADD . $WORKDIR
+
+RUN mvn clean \
+    && mvn dependency:resolve -Dsilent=true
+    
+
+

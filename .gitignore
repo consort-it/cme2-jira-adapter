@@ -1,0 +1,8 @@
+.env
+target/
+.project
+.classpath
+.settings/
+jira-adapter-secret.yml
+jira-adapter-deployment.yml
+testresult/

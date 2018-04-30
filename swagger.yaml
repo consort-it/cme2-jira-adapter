@@ -1,0 +1,90 @@
+swagger: "2.0"
+info:
+  version: 1.0.0
+  title: Jira Adapter API
+  description: An API for querying Jira
+basePath: /api/v1/jira-adapter
+schemes: 
+  - https
+paths:
+  /issues:
+    get:
+      tags:
+       - JiraBackend
+      operationId: getIssues
+      description: Returns a list of Jira Issues, depending on the given "tag" parameter
+      produces: 
+        - application/json
+      parameters:
+        - name: tag
+          required: true
+          in: query
+          description: The tag of the Jira issue
+          type: string
+        - name: status
+          required: false
+          in: query
+          description: Return only issues with this status. If parameter is not set, return issues != 'Closed'.
+          type: string
+      responses:
+        '200':
+          description: A list of Jira Issues or an empty list (maximum of 200 Issues)
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/JiraIssue"
+        '500':
+          description: Something went wrong while fetching data from jira.
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+        '400':
+          description: The request was not valid
+          schema:
+            $ref: "#/definitions/ErrorResponse"
+definitions:
+  JiraIssue:
+    description: Information about a Jira issue
+    type: object
+    required:
+      - key
+      - title
+      - updated
+      - status
+      - url
+    properties:
+      title:
+        description: Jira issue title
+        type: string
+        example: Implement new functionality
+      updated:
+        description: When this issue was created or last updated (in UTC)
+        type: string
+        format: date-time
+      key:
+        description: The ID of the Jira issue
+        type: string
+        example: C2-42
+      status:
+        description: Jira status of this issue
+        type: string
+        example: open
+      url:
+        type: string
+        format: url
+        description: The fully qualified url to view this JIRA issue.
+        example: https://jira.company.com/browse/C2-42
+  ErrorResponse:
+    type: object
+    required:
+      - code
+      - message
+    properties:
+      code:
+        type: string
+        pattern: '^JA-\d+$'
+        description: "This error code should have the format 'JA-XXX' where XXX is an integer. It is used to uniquely distinguish different error cases in order to display a suitable and translatable error message on the UI."
+        example: "JA-504"
+      message:
+        type: string
+        description: "Should contain a short, meaningful description of the error case. Might be displayed to the end user."
+        example: "Jira connection failed."

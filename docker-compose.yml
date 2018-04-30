@@ -1,0 +1,27 @@
+# this file is used in the 'testing' stage of the Jenkins pipeline
+# there are two services, because they are executed parallel
+#
+# the docker file that is used for production (swarm) is docker-stack.yml
+
+version: '3.3' 
+
+services:
+
+  unit:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    working_dir: /microservice
+    command: bash -c "mvn org.jacoco:jacoco-maven-plugin:prepare-agent install -Dmaven.test.failure.ignore=false test package org.sonarsource.scanner.maven:sonar-maven-plugin:3.4.0.905:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_HOST_TOKEN -Dsonar.junit.reportPaths=target/surefire-reports"
+    #command: bash -c "mvn jacoco:prepare-agent install -Dmaven.test.failure.ignore=false test integration-test sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_HOST_TOKEN -Dsonar.junit.reportPaths=target/surefire-reports; chmod -R 777 testresult"
+   # volumes:
+   # - ./testresult:/microservice/testresult
+    
+    
+
+    
+    
+    
+
+     
+

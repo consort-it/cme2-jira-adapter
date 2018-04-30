@@ -1,0 +1,89 @@
+{
+  "consumer": {
+    "name": "cme-ui"
+  },
+  "provider": {
+    "name": "jira-adapter"
+  },
+  "interactions": [
+    {
+      "description": "a request to GET issues with tag PACT-TEST-JIRA-TAG when issues exist",
+      "providerState": "provider has some issues with tag PACT-TEST-JIRA-TAG",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/jira-adapter/issues",
+        "query": "tag=PACT-TEST-JIRA-TAG&nosec=1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+          {
+            "key": "KEY",
+            "status": "STATUS",
+            "title": "TITLE",
+            "updated": "2018-07-05T04:03:02.001Z",
+            "url": "https://jirasomewhere.com"
+          }
+        ],
+        "matchingRules": {
+          "$.body": {
+            "min": 1
+          },
+          "$.body[*].*": {
+            "match": "type"
+          }
+        }
+      }
+    },
+    {
+      "description": "a request to GET issues with tag PACT-TEST-JIRA-TAG-NOT-FOUND when no issues exist",
+      "providerState": "provider has no issues with tag PACT-TEST-JIRA-TAG-NOT-FOUND",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/jira-adapter/issues",
+        "query": "tag=PACT-TEST-JIRA-TAG-NOT-FOUND&nosec=1"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": [
+
+        ]
+      }
+    },
+    {
+      "description": "a request to GET issues without providing tag query parameter",
+      "providerState": "provider accepts requests",
+      "request": {
+        "method": "GET",
+        "path": "/api/v1/jira-adapter/issues",
+        "query": "nosec=1"
+      },
+      "response": {
+        "status": 400,
+        "headers": {
+          "content-type": "application/json"
+        },
+        "body": {
+          "code": "JA-123",
+          "message": "internal error!"
+        },
+        "matchingRules": {
+          "$.body": {
+            "match": "type"
+          }
+        }
+      }
+    }
+  ],
+  "metadata": {
+    "pactSpecification": {
+      "version": "2.0.0"
+    }
+  }
+}
